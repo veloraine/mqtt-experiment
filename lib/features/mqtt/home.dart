@@ -16,7 +16,13 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _connect();
+
+  }
+
+  @override
+  void dispose() {
+    client!.disconnect();
+    super.dispose();
   }
 
   void _connect() async {
@@ -47,8 +53,12 @@ class _HomePageState extends State<HomePage> {
       final MqttPublishMessage message = c![0].payload as MqttPublishMessage;
       final String payload =
           MqttPublishPayload.bytesToStringAsString(message.payload.message);
-      Logger().w('Received message:$payload from topic: ${c[0].topic}>');
+      Logger().i('Received message:$payload from topic: ${c[0].topic}>');
     });
+  }
+
+  void _disconnect() {
+    client!.disconnect();
   }
 
   void _onConnected() {
@@ -77,8 +87,26 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
         backgroundColor: Colors.blueAccent,
       ),
-      body: const Center(
-        child: Text('MQTT Integration Example'),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                _connect();
+              },
+              child: const Text('Connect'),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                _disconnect();
+              },
+              child: const Text('Disconnect'),
+            ),
+          ],
+        ),
       ),
     );
   }
