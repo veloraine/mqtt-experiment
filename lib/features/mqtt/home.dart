@@ -21,7 +21,7 @@ class _HomePageState extends State<HomePage> {
 
   void _connect() async {
     client = MqttServerClient.withPort(
-        'broker.emqx.io', 'cobatest3029902390239023', 1883);
+        'broker.hivemq.com', 'cobatest3029902390239023', 1883);
 
     // Set callback handlers
     client!.logging(on: true);
