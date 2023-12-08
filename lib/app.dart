@@ -8,7 +8,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Logger().i('App started');
     return MaterialApp(
       title: 'MQTT Test',
       theme: ThemeData(

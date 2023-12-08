@@ -21,7 +21,7 @@ class _HomePageState extends State<HomePage> {
 
   void _connect() async {
     client = MqttServerClient.withPort(
-        'broker.emqx.io', 'cobatest3029902390239023', 8083);
+        'broker.emqx.io', 'cobatest3029902390239023', 1883);
 
     // Set callback handlers
     client!.logging(on: true);
@@ -32,11 +32,15 @@ class _HomePageState extends State<HomePage> {
 
     // Connect to the broker
     Logger().w('Connection status = ${client!.connectionStatus?.state}');
-    Logger().i('Trying to Connect');
 
-    await client!.connect();
-
-    Logger().i('Connected');
+    try {
+      Logger().i('Trying to Connect');
+      await client!.connect();
+      Logger().i('Connected');
+    } catch (e) {
+      Logger().e('Exception: $e');
+      client!.disconnect();
+    }
 
     // listen to the topic
     client!.updates!.listen((List<MqttReceivedMessage<MqttMessage?>>? c) {
@@ -48,7 +52,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _onConnected() {
-    Logger().w('Connected to the broker');
+    Logger().i('Connected to the broker');
     // Subscribe to a topic
     client!.subscribe('bikunDevTopicMobFE', MqttQos.exactlyOnce);
   }
@@ -58,11 +62,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _onSubscribed(String topic) {
-    Logger().w('Subscribed to the topic: $topic');
+    Logger().i('Subscribed to the topic: $topic');
   }
 
   void _onSubscribeFail(String topic) {
-    Logger().w('Failed to subscribe to the topic: $topic');
+    Logger().i('Failed to subscribe to the topic: $topic');
   }
 
   @override
